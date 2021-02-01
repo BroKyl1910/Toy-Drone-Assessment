@@ -26,8 +26,12 @@ function windowResized() {
   resizeCanvas(width, height);
 }
 
+
+
+
 var commandInput = $("#command-input");
 var historyList = $("ul.history-list");
+var drone = new Drone();
 
 $(commandInput).on("keypress", (e)=>{
   // 13 is key code for enter

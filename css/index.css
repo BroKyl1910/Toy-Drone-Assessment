@@ -248,17 +248,3 @@ a.nav-item:hover {
         width: 100%;
     }
 }
-
-/* Desktops, large screens
-
-@media screen and (max-width: 1200px) and (min-width: 1024px){
-    .canvas-wrapper {}
-    .command-wrapper {}
-}
-
-/* Extra large screens, TV */
-
-@media screen and (min-width: 1201px) and (min-width: 1200px) {
-    .canvas-wrapper {}
-    .command-wrapper {}
-} */
