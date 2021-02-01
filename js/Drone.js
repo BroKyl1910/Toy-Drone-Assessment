@@ -53,7 +53,7 @@ class Drone {
   }
 
   report() {
-      return "Report: Position("+this.x+","+this.y+"), Facing "+this.getDirection();
+      return "Report: Position("+this.x+","+this.y+"), facing "+this.getDirection();
   }
 
   move(maxX, maxY) {
