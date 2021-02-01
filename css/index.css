@@ -1,0 +1,236 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,400;0,700;1,100;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100;0,400;0,700;1,100;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=VT323:ital,wght@0,100;0,400;0,700;1,100;1,400;1,700&display=swap');
+* {
+    font-family: "Roboto", sans-serif;
+}
+
+*::-webkit-scrollbar {
+    width: 5px;
+    height: 3px;
+    border-radius: 50%;
+}
+
+*::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.51);
+    box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.51);
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: darkgrey;
+    outline: 1px solid slategrey;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    background: rgb(232, 232, 232);
+}
+
+.navbar {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 15px 30px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background: rgb(51, 51, 51);
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+}
+
+.nav-item {
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+    color: rgba(255, 255, 255, 1);
+}
+
+.nav-title-wrapper span {
+    display: block;
+    font-family: "Roboto Condensed", sans-serif;
+}
+
+.nav-item.title {
+    font-size: 1.6em;
+}
+
+.nav-item.name {
+    font-size: 0.8em;
+    color: rgba(255, 255, 255, 0.7);
+    text-align: end;
+}
+
+a.nav-item {
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+a.nav-item:hover {
+    color: rgba(255, 255, 255, 1);
+}
+
+.body-wrapper {
+    width: 70%;
+    margin: 30px auto;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
+    /* height: 700px; */
+    padding: 30px;
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+}
+
+.canvas-wrapper {
+    width: 50%;
+    position: relative;
+}
+
+.canvas-wrapper::before {
+    content: "";
+    display: block;
+    padding-top: 100%;
+}
+
+#canvas-holder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.command-wrapper {
+    /* height: 100%; */
+    /* border: 1px solid rgba(0, 0, 0, 0.1); */
+    /* background: rgba(255, 255, 255, 0.7); */
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex-grow: 1;
+}
+
+.command-wrapper * {
+    font-family: "VT323", monospace;
+}
+
+.history-wrapper {
+    /* height: 100%; */
+    flex-basis: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    vertical-align: bottom;
+}
+
+.history-list {
+    list-style: none;
+    padding: 0 10px;
+    overflow-y: auto;
+}
+
+.history-item.ok {
+    color: green;
+}
+
+.history-item.warn {
+    color: orange;
+}
+
+.history-item.danger {
+    color: red;
+}
+
+.history-item.neutral {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.history-item.feedback-neutral {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.history-item.feedback-danger {
+    color: rgba(255, 0, 0, 0.5);
+}
+
+.command-input-wrapper {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.help-tool-tip {
+    display: block;
+    margin: 15px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.command-input-wrapper .text-input {
+    box-sizing: border-box;
+    padding: 15px;
+    border: none;
+    width: 100%;
+    font-size: 1.2em;
+    background-color: rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+.command-input-wrapper .text-input:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Breakpoints for canvas and command wrapper */
+
+/* Breakpoints found at https://www.freecodecamp.org/news/css-media-queries-breakpoints-media-types-standard-resolutions-and-more/ */
+
+/* Mobile Devices */
+
+@media screen and (max-width: 480px) {
+    .body-wrapper {
+        flex-direction: column;
+    }
+    .canvas-wrapper {
+        width: 100%;
+    }
+    .canvas-wrapper::before {
+        padding-top: 100%;
+    }
+    .command-wrapper {
+        display: block;
+        width: 100%;
+    }
+}
+
+/* iPads, Tablets */
+
+@media screen and (max-width: 768px) {
+    .canvas-wrapper {}
+    .command-wrapper {}
+}
+
+/* Small screens, laptops */
+
+@media screen and (max-width: 1024px) {}
+
+.canvas-wrapper {}
+
+.command-wrapper {}
+
+/* Desktops, large screens */
+
+@media screen and (max-width: 1200px) {
+    .canvas-wrapper {}
+    .command-wrapper {}
+}
+
+/* Extra large screens, TV */
+
+@media screen and (min-width: 1201px) {
+    .canvas-wrapper {}
+    .command-wrapper {}
+}
