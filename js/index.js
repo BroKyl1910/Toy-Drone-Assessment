@@ -159,7 +159,9 @@ function createTableHtml() {
     var yIndex = Math.abs(y - 9);
     tableHtml += '<tr><td class="index-reference">' + yIndex + "</td>";
     for (let x = 0; x < map[y].length; x++) {
-      // tableHtml += '<td>' + yIndex + "," + x + "</td>";
+      var dronePlaceholderHtml = '<div class="drone-placeholder"></div>';
+      var projectilePlaceholderHtml =
+        '<div class="projectile-placeholder"><div class="placeholder_1"></div><div class="placeholder_2"></div><div class="placeholder_3"></div></div>';
       tableHtml +=
         "<td " +
         (map[x][yIndex] == "x" ? 'class="obstruction"' : "") +
@@ -167,7 +169,11 @@ function createTableHtml() {
         x +
         "_" +
         y +
-        '"><div class="drone-placeholder"></div></td>';
+        '">' +
+        dronePlaceholderHtml +
+        " " +
+        projectilePlaceholderHtml +
+        "</td>";
     }
     tableHtml += '<td class="index-reference">' + yIndex + "</td></tr>";
     // tableHtml += "</tr>";
@@ -542,7 +548,7 @@ function explode(x, y, dronePlaceholder) {
   $(explosion).css("left", explosionX + "px");
 
   setTimeout(() => {
-  $(explosion).parent().css("position", "static");
+    $(explosion).parent().css("position", "static");
     $(".explosion").remove();
   }, 200);
 }

@@ -137,15 +137,15 @@ img.drone-img {
 
 .projectile {
     position: absolute;
-    height: 15px;
-    width: 15px;
+    height: 1em;
+    width: 1em;
     background: rgba(255, 255, 255, 0.7);
 }
 
 .explosion {
     position: absolute;
-    height: 30px;
-    width: 30px;
+    height: 2em;
+    width: 2em;
     background: rgba(255, 136, 0, 1);
 }
 
