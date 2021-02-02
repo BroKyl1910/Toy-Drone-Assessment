@@ -1,0 +1,66 @@
+/* Breakpoints for canvas and command wrapper */
+
+/* Breakpoints found at https://www.freecodecamp.org/news/css-media-queries-breakpoints-media-types-standard-resolutions-and-more/ */
+
+/* Mobile Devices */
+
+@media screen and (max-width: 480px) {
+    .body-wrapper {
+        width: 90%;
+        flex-direction: column;
+        justify-content: center;
+        height: 80%;
+        padding: 5px;
+    }
+    .table-wrapper {
+        width: 100%;
+    }
+    .table-wrapper::before {
+        padding-top: 100%;
+    }
+    .command-wrapper {
+        margin-top: 5px;
+        width: 100%;
+        height: 100%;
+    }
+}
+
+/* iPads, Tablets */
+
+@media screen and (max-width: 768px) and (min-width: 481px) {
+    .body-wrapper {
+        width: 60%;
+        flex-direction: column;
+        justify-content: center;
+        height: 80%;
+        padding: 5px;
+    }
+    .table-wrapper {
+        width: 100%;
+    }
+    .table-wrapper::before {
+        padding-top: 100%;
+    }
+    .command-wrapper {
+        margin-top: 5px;
+        width: 100%;
+    }
+}
+
+/* Small screens, laptops */
+
+@media screen and (max-width: 1024px) and (min-width: 769px) {
+    .body-wrapper {
+        width: 90%;
+        align-items: stretch;
+    }
+    .table-wrapper {
+        width: 100%;
+    }
+    .table-wrapper::before {
+        padding-top: 100%;
+    }
+    .command-wrapper {
+        width: 100%;
+    }
+}

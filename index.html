@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Toy Drone Assessment</title>
     <link rel="stylesheet" href="css/index.css" />
+    <link rel="stylesheet" href="css/breakpoints.css" />
   </head>
   <body>
     <nav class="navbar">
@@ -12,16 +13,25 @@
         <span class="nav-item title">Toy Drone Assessment</span>
         <span class="nav-item name">Kyle Brooks</span>
       </div>
-      <a class="nav-item" href="https://github.com/BroKyl1910/Toy-Drone-Assessment" target="_blank">View Source</a>
+      <a
+        class="nav-item"
+        href="https://github.com/BroKyl1910/Toy-Drone-Assessment"
+        target="_blank"
+        >View Source</a
+      >
     </nav>
     <div class="body-wrapper">
-      <div class="canvas-wrapper">
-        <div id="canvas-holder"></div>
+      <div class="table-wrapper">
+        <table class="ui-table" style="table-layout:fixed;" >
+          <tbody class="ui-tbody">
+
+          </tbody>
+        </table>
       </div>
       <div class="command-wrapper">
         <div class="history-wrapper">
           <ul class="history-list">
-            <li class="history-item ok">&lt;sys&gt; Drone online</li>
+            <li class="history-item ok">&lt;sys&gt; Drone online...</li>
           </ul>
         </div>
         <div class="command-input-wrapper">
@@ -43,6 +53,5 @@
     <script src="js/p5.min.js"></script>
     <script src="js/Drone.js"></script>
     <script src="js/index.js"></script>
-    <!-- <script src="js/console.js"></script> -->
   </body>
 </html>
