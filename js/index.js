@@ -274,7 +274,17 @@ function placeCommandValid(command) {
     return false;
   }
 
-  var f = argumentParts[2].trim().toLowerCase();
+  if(!isNumeric(argumentParts[0].trim()) || !isNumeric(argumentParts[1].trim())){
+    addItemToHistory(
+      "sys",
+      "Invalid place command. Invalid co-ordinates given",
+      "feedback-danger"
+    );
+    addItemToHistory("sys", "Enter -help for help", "feedback-danger");
+    return false;
+  }
+
+  var f = argumentParts[2];
   var validFacings = ["north", "south", "east", "west"];
   if (!validFacings.includes(f)) {
     addItemToHistory(
@@ -286,6 +296,10 @@ function placeCommandValid(command) {
     return false;
   }
   return true;
+}
+
+function isNumeric(c){
+  return /^\d+$/.test(c);
 }
 
 function addItemToHistory(prefix, message, statusClass) {
@@ -307,7 +321,7 @@ function placeDrone(x, y, f) {
   if (x < 0 || x > maxX) {
     addItemToHistory(
       "sys",
-      "Drone could not be place. Out of x bounds",
+      "Drone could not be placed. Out of x bounds",
       "feedback-danger"
     );
     return;
@@ -316,7 +330,7 @@ function placeDrone(x, y, f) {
   if (y < 0 || y > maxY) {
     addItemToHistory(
       "sys",
-      "Drone could not be place. Out of y bounds",
+      "Drone could not be placed. Out of y bounds",
       "feedback-danger"
     );
     return;
@@ -401,4 +415,9 @@ function move() {
   removeDroneFromMap();
   drone.move();
   placeDroneOnMap();
+  addItemToHistory(
+    "sys",
+    "Drone moved forwards one unit in the direction of "+drone.getDirection()+"...",
+    "ok"
+  );
 }
