@@ -12,11 +12,15 @@ class Drone {
     this.placed = false;
   }
 
-  place(x,y,f){
+  place(x, y, f, obstructions) {
+    if(this.blockObstructed(x,y, obstructions)){
+      return false
+    }
     this.x = x;
     this.y = y;
     this.bearing = this.getBearing(f);
     this.placed = true;
+    return true;
   }
 
   left() {
@@ -35,17 +39,17 @@ class Drone {
     }
   }
 
-  getBearing(facing){
-      switch(facing){
-          case "north": 
-            return 0;
-          case "east": 
-            return 90;
-          case "south": 
-            return 180;
-          case "west": 
-            return 270;
-      }
+  getBearing(facing) {
+    switch (facing) {
+      case "north":
+        return 0;
+      case "east":
+        return 90;
+      case "south":
+        return 180;
+      case "west":
+        return 270;
+    }
   }
 
   getDirection() {
@@ -53,10 +57,17 @@ class Drone {
   }
 
   report() {
-      return "Report: Position("+this.x+","+this.y+"), facing "+this.getDirection();
+    return (
+      "Report: Position(" +
+      this.x +
+      "," +
+      this.y +
+      "), facing " +
+      this.getDirection()
+    );
   }
 
-  move(maxX, maxY) {
+  move(maxX, maxY, obstructions) {
     var xChange;
     var yChange;
     switch (this.bearing) {
@@ -84,14 +95,61 @@ class Drone {
     var newX = this.x + xChange;
     var newY = this.y + yChange;
 
+    if(this.blockObstructed(newX, newY, obstructions)){
+      return false;
+    }
+
     if (newX > maxX || newX < 0) {
       return false;
     }
+
     this.x = newX;
 
     if (newY > maxY || newY < 0) {
       return false;
     }
     this.y = newY;
+
+    return true;
+  }
+
+  attack(obstructions, maxX, maxY) {
+    // Need to check space around the drone according to its bearing
+    // Cannot fire if within 2 units of an obstruction or edge
+    console.log("Attack bearing", this.bearing);
+    switch (this.bearing) {
+      case 0:
+        if (this.y + 2 > maxY || this.blockObstructed(this.x, this.y + 2, obstructions)) {
+          return false;
+        }
+        break;
+      case 90:
+        if (this.x + 2 > maxX || this.blockObstructed(this.x + 2, this.y, obstructions)) {
+          return false;
+        }
+        break;
+      case 180:
+        if (this.y - 2 < 0 || this.blockObstructed(this.x, this.y - 2, obstructions)) {
+          return false;
+        }
+        break;
+      case 270:
+        if (this.x + -2 < 0 || this.blockObstructed(this.x - 2, this.y, obstructions)) {
+          return false;
+        }
+        break;
+    }
+    return true;
+  }
+
+  // Check if block is obstructed
+  blockObstructed(x, y, obstructions) {
+    for (const obstruction of obstructions) {
+      if(x == obstruction[0] && y == obstruction[1]){
+        return true;
+      }
+    }
+
+    return false;
   }
 }

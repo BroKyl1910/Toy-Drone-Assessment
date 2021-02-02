@@ -12,7 +12,48 @@ var map = Array(10)
   .map(() => Array(10));
 
 // List of obstructions
-var obstructions;
+// 2D array of co-ordinates in the form [x,y]
+var obstructions = [
+  [0, 9],
+  [1, 9],
+  [2, 9],
+  [3, 9],
+  [8, 9],
+  [9, 9],
+  [0, 8],
+  [1, 8],
+  [2, 8],
+  [9, 8],
+  [0, 7],
+  [1, 7],
+  [0, 6],
+  [6, 6],
+  [5, 5],
+  [9, 3],
+  [0, 2],
+  [5, 2],
+  [6, 2],
+  [9, 2],
+  [0, 1],
+  [1, 1],
+  [4, 1],
+  [5, 1],
+  [6, 1],
+  [7, 1],
+  [9, 1],
+  [0, 0],
+  [1, 0],
+  [2, 0],
+  [3, 0],
+  [4, 0],
+  [5, 0],
+  [6, 0],
+  [7, 0],
+  [8, 0],
+  [9, 0],
+];
+
+populateMapWithObstructions();
 
 // command and methods
 var commands = {
@@ -29,6 +70,15 @@ var commands = {
 $(window).ready(() => {
   generateMap();
 });
+
+function populateMapWithObstructions() {
+  for (const obstruction of obstructions) {
+    var x = obstruction[0];
+    var y = obstruction[1];
+
+    map[x][y] = "x";
+  }
+}
 
 function removeDroneFromMap() {
   var mapX = drone.x;
@@ -111,7 +161,9 @@ function createTableHtml() {
     for (let x = 0; x < map[y].length; x++) {
       // tableHtml += '<td>' + yIndex + "," + x + "</td>";
       tableHtml +=
-        '<td id="map_' +
+        "<td " +
+        (map[x][yIndex] == "x" ? 'class="obstruction"' : "") +
+        'id="map_' +
         x +
         "_" +
         y +
@@ -139,7 +191,7 @@ $(commandInput).on("keydown", (e) => {
     pastCommands.unshift(enteredCommand);
     // Output command to history
     addItemToHistory("usr", enteredCommand, "neutral");
-    
+
     if (commandValid(enteredCommand)) {
       handleCommand(enteredCommand);
     }
@@ -274,7 +326,10 @@ function placeCommandValid(command) {
     return false;
   }
 
-  if(!isNumeric(argumentParts[0].trim()) || !isNumeric(argumentParts[1].trim())){
+  if (
+    !isNumeric(argumentParts[0].trim()) ||
+    !isNumeric(argumentParts[1].trim())
+  ) {
     addItemToHistory(
       "sys",
       "Invalid place command. Invalid co-ordinates given",
@@ -298,7 +353,7 @@ function placeCommandValid(command) {
   return true;
 }
 
-function isNumeric(c){
+function isNumeric(c) {
   return /^\d+$/.test(c);
 }
 
@@ -336,7 +391,15 @@ function placeDrone(x, y, f) {
     return;
   }
 
-  drone.place(x, y, f);
+  var placed = drone.place(x, y, f, obstructions);
+  if (!placed) {
+    addItemToHistory(
+      "sys",
+      "Drone could not be placed there! Please make sure surface is not obstructed",
+      "feedback-danger"
+    );
+    return;
+  }
   placeDroneOnMap();
   addItemToHistory(
     "sys",
@@ -374,7 +437,114 @@ function right() {
 }
 
 function attack() {
-  addItemToHistory("sys", "Drone attacking...", "ok");
+  var attacked = drone.attack(obstructions, maxX, maxY);
+  if (!attacked) {
+    addItemToHistory(
+      "sys",
+      "Drone does not have 2 units clear in front of it. Aborting!",
+      "feedback-danger"
+    );
+  } else {
+    addItemToHistory("sys", "Drone attacking...", "ok");
+    fireProjectile();
+  }
+}
+
+function fireProjectile() {
+  var mapX = drone.x;
+  var mapY = getInvertedY(drone.y);
+
+  var dronePlaceholder = $("#map_" + mapX + "_" + mapY).find(
+    ".drone-placeholder"
+  );
+
+  var cellWidth = $(dronePlaceholder).innerWidth();
+  var cellHeight = $(dronePlaceholder).innerHeight();
+  var projectileX = $(dronePlaceholder).position().left - 0.5 * cellWidth;
+  var projectileY = $(dronePlaceholder).position().top + 0.5 * cellHeight;
+
+  $(dronePlaceholder).append('<div class="projectile"></div>');
+  var projectile = $(".projectile");
+  $(projectile).parent().css("position", "relative");
+
+  var projectileHeight = $(projectile).innerHeight();
+  projectileY = projectileY - 0.5 * projectileHeight;
+  $(projectile).css("top", projectileY + "px");
+
+  var projectileWidth = $(projectile).innerWidth();
+  projectileX = projectileX + 0.5 * projectileWidth;
+  $(projectile).css("left", projectileX + "px");
+
+  var startX = projectileX;
+  var endX = projectileX - 2 * cellWidth + projectileWidth;
+  var startY = projectileY;
+  var endY = projectileY;
+  animateProjectile(startX, startY, endX, endY, dronePlaceholder);
+}
+
+function animateProjectile(startX, startY, endX, endY, dronePlaceholder) {
+  var xChange;
+  var yChange;
+  switch (drone.bearing) {
+    case 0:
+      xChange = 0;
+      yChange = 1;
+      break;
+    case 90:
+      xChange = 1;
+      yChange = 0;
+      break;
+    case 180:
+      xChange = 0;
+      yChange = -1;
+      break;
+    case 270:
+      xChange = -1;
+      yChange = 0;
+      break;
+    default:
+      xChange = 0;
+      yChange = 1;
+  }
+
+  console.log("xChange", xChange);
+  console.log("yChange", yChange);
+
+  var currentX = startX;
+  var currentY = startY;
+  var projectile = $(".projectile");
+
+  var interval = setInterval(function () {
+    currentY += 1 * yChange;
+    currentX += 1 * xChange;
+
+    $(projectile).css("top", currentY + "px");
+    $(projectile).css("left", currentX + "px");
+    if (currentX < endX && currentY >= endY) {
+      clearInterval(interval);
+      explode(endX, endY, dronePlaceholder);
+    }
+  }, 10);
+}
+
+function explode(x, y, dronePlaceholder) {
+  $(".projectile").remove();
+  $(dronePlaceholder).append('<div class="explosion"></div>');
+  var explosion = $(".explosion");
+  $(explosion).parent().css("position", "relative");
+
+  var explosionX, explosionY;
+  var explosionHeight = $(explosion).innerHeight();
+  explosionY = y - 0.5 * explosionHeight + 7.5;
+  $(explosion).css("top", explosionY + "px");
+
+  explosionX = x;
+  $(explosion).css("left", explosionX + "px");
+
+  setTimeout(() => {
+  $(explosion).parent().css("position", "static");
+    $(".explosion").remove();
+  }, 200);
 }
 
 function report() {
@@ -413,11 +583,23 @@ function help() {
 
 function move() {
   removeDroneFromMap();
-  drone.move();
+  var moved = drone.move(maxX, maxY, obstructions);
   placeDroneOnMap();
-  addItemToHistory(
-    "sys",
-    "Drone moved forwards one unit in the direction of "+drone.getDirection()+"...",
-    "ok"
-  );
+  if (!moved) {
+    addItemToHistory(
+      "sys",
+      "Drone could not be moved in the direction of " +
+        drone.getDirection() +
+        "...",
+      "feedback-danger"
+    );
+  } else {
+    addItemToHistory(
+      "sys",
+      "Drone moved forwards one unit in the direction of " +
+        drone.getDirection() +
+        "...",
+      "ok"
+    );
+  }
 }

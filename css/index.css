@@ -86,7 +86,6 @@ a.nav-item:hover {
     display: grid;
     grid-auto-rows: 1fr;
     grid-template-columns: 55% 45%;
-    
 }
 
 .table-wrapper {
@@ -134,6 +133,20 @@ div.drone-placeholder {
 
 img.drone-img {
     width: 100%;
+}
+
+.projectile {
+    position: absolute;
+    height: 15px;
+    width: 15px;
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.explosion {
+    position: absolute;
+    height: 30px;
+    width: 30px;
+    background: rgba(255, 136, 0, 1);
 }
 
 .command-wrapper {
