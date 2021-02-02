@@ -119,22 +119,22 @@ class Drone {
     console.log("Attack bearing", this.bearing);
     switch (this.bearing) {
       case 0:
-        if (this.y + 2 > maxY || this.blockObstructed(this.x, this.y + 2, obstructions)) {
+        if (this.y + 2 > maxY || this.blockObstructed(this.x, this.y + 1, obstructions) || this.blockObstructed(this.x, this.y + 2, obstructions)) {
           return false;
         }
         break;
       case 90:
-        if (this.x + 2 > maxX || this.blockObstructed(this.x + 2, this.y, obstructions)) {
+        if (this.x + 2 > maxX || this.blockObstructed(this.x + 1, this.y, obstructions) || this.blockObstructed(this.x + 2, this.y, obstructions)) {
           return false;
         }
         break;
       case 180:
-        if (this.y - 2 < 0 || this.blockObstructed(this.x, this.y - 2, obstructions)) {
+        if (this.y - 2 < 0 || this.blockObstructed(this.x, this.y - 1, obstructions) || this.blockObstructed(this.x, this.y - 2, obstructions)) {
           return false;
         }
         break;
       case 270:
-        if (this.x + -2 < 0 || this.blockObstructed(this.x - 2, this.y, obstructions)) {
+        if (this.x + -2 < 0 || this.blockObstructed(this.x - 1, this.y, obstructions) || this.blockObstructed(this.x - 2, this.y, obstructions)) {
           return false;
         }
         break;

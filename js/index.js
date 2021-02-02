@@ -452,7 +452,7 @@ function attack() {
     );
   } else {
     addItemToHistory("sys", "Drone attacking...", "ok");
-    fireProjectile();
+    // fireProjectile();
   }
 }
 
