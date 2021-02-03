@@ -53,16 +53,7 @@ var obstructions = [
   [9, 0],
 ];
 
-var sounds = {
-  enter: "../assets/sounds/enter.mp3",
-  error: "../assets/sounds/error.mp3",
-  explosion: "../assets/sounds/explosion.mp3",
-  keypress: "../assets/sounds/keypress.mp3",
-  output: "../assets/sounds/output.mp3",
-  shotgun: "../assets/sounds/shotgun.mp3",
-  radar: "../assets/sounds/radar.mp3",
-};
-
+// Initialise sounds
 ion.sound({
   sounds: [
     { name: "enter" },
@@ -99,6 +90,7 @@ $(window).ready(() => {
   generateMap();
 });
 
+// Add obstructions to map
 function populateMapWithObstructions() {
   for (const obstruction of obstructions) {
     var x = obstruction[0];
@@ -108,6 +100,7 @@ function populateMapWithObstructions() {
   }
 }
 
+// Used when hiding the drone from map visually
 function removeDroneFromMap() {
   var mapX = drone.x;
   var mapY = getInvertedY(drone.y);
@@ -117,15 +110,9 @@ function removeDroneFromMap() {
   );
 
   $(dronePlaceholder).hide();
-
-  // $(dronePlaceholder).addClass("fade-out");
-  // setTimeout(() => {
-  //   $(dronePlaceholder).css("background-image", "none");
-  //   $(dronePlaceholder).css("opacity", "1");
-  //   $(dronePlaceholder).removeClass("fade-out");
-  // }, 200);
 }
 
+// Used when visually placing drone on the map
 function placeDroneOnMap() {
   console.log("Bearing", drone.bearing);
   var mapX = drone.x;
@@ -161,6 +148,7 @@ function placeDroneOnMap() {
   );
 }
 
+// Creates the map
 function generateMap() {
   var uiTable = $(".ui-tbody");
   $(uiTable).empty();
@@ -170,10 +158,13 @@ function generateMap() {
   $(uiTable).append(tableHtml);
 }
 
+// Inverts the Y value to be able to visualise game on map
+// Necessary because in a 2D array, 0;0 would be top left, not bottom left
 function getInvertedY(y) {
   return Math.abs(9 - y);
 }
 
+// Using the map 2D array, creates table to reprents map
 function createTableHtml() {
   // create top row of indices
   var tableHtml = "";
@@ -215,7 +206,7 @@ function createTableHtml() {
   return tableHtml;
 }
 
-//Enter key
+// Handle key presses - Enter to submit, and arrow to scroll through entered commands
 $(commandInput).on("keydown", (e) => {
   playSound("enter");
   // 13 is key code for enter
@@ -264,9 +255,11 @@ function playSound(soundName) {
   ion.sound.play(soundName);
 }
 
+// When a command is issued, it is brought here and it decides how to handle it
 function handleCommand(command) {
   command = command.trim().toLowerCase();
 
+  // drone should be placed if the command it place, but can also be placed again once already placed
   if (!drone.placed || command.split(" ")[0].toLowerCase() == "place") {
     handlePlaceCommand(command);
   } else {
@@ -275,6 +268,7 @@ function handleCommand(command) {
   }
 }
 
+// Handle commands that aren't place commands, this is simpler as the others don't have arguments
 function handleNonPlaceCommand(command) {
   if (commands[command] == undefined) {
     addItemToHistory("sys", "Invalid command", "feedback-danger");
@@ -284,6 +278,7 @@ function handleNonPlaceCommand(command) {
   }
 }
 
+// Handle commands that are place
 function handlePlaceCommand(command) {
   // The first command has to be place
   var commandParts = command.split(" ");
@@ -312,6 +307,7 @@ function handlePlaceCommand(command) {
   }
 }
 
+// Commands must not be empty
 function commandValid(command) {
   if (command == "") {
     addItemToHistory("sys", "Please enter a command", "feedback-danger");
@@ -320,6 +316,7 @@ function commandValid(command) {
   return true;
 }
 
+// Validate number of parts (PLACE ARGS) and how many args (X,Y,F) as well as argument types
 function placeCommandValid(command) {
   var commandParts = command.split(" ");
 
@@ -385,10 +382,12 @@ function placeCommandValid(command) {
   return true;
 }
 
+// Check if a given character is numeric
 function isNumeric(c) {
   return /^\d+$/.test(c);
 }
 
+// Used to output feed of commands and feedback to the user
 function addItemToHistory(prefix, message, statusClass) {
   if (statusClass == "feedback-danger") playSound("error");
 
@@ -401,6 +400,7 @@ function addItemToHistory(prefix, message, statusClass) {
   });
 }
 
+// Method called when place command is issued
 function placeDrone(x, y, f) {
   if (drone.placed) {
     removeDroneFromMap();
@@ -448,6 +448,7 @@ function placeDrone(x, y, f) {
   );
 }
 
+// Method called when left command is issued
 function left() {
   removeDroneFromMap();
   drone.left();
@@ -459,6 +460,7 @@ function left() {
   );
 }
 
+// Method called when right command is issued
 function right() {
   removeDroneFromMap();
   drone.right();
@@ -470,6 +472,7 @@ function right() {
   );
 }
 
+// Method called when attack command is issued
 function attack() {
   var attacked = drone.attack(obstructions, maxX, maxY);
   if (!attacked) {
@@ -484,6 +487,7 @@ function attack() {
   }
 }
 
+// Used to animate the firing of the projectile from the block of origin to the target
 function fireProjectile() {
   var mapX = drone.x;
   var mapY = getInvertedY(drone.y);
@@ -590,11 +594,12 @@ function fireProjectile() {
     duration: 0.5,
     ease: Linear.easeNone,
     onComplete: () => {
-      explode(endX, endX, projectile);
+      explode(projectile);
     },
   });
 }
 
+// Used to get height of explosion, to calculate how much space to leave on the right and bottom sides of target
 function getExplosionHeight(){
   $("body").append('<div class="explosion"></div>');
   var explosionHeight = $('.explosion').innerHeight();
@@ -602,8 +607,8 @@ function getExplosionHeight(){
   return explosionHeight;
 }
 
-function explode(endX, endY, projectile) {
-  var projectileHeight = $(projectile).innerHeight();
+// Used to change projectile to explosive and then get removed from DOM
+function explode(projectile) {
   $(projectile).removeClass("projectile");
   $(projectile).addClass("explosion");
 
@@ -615,11 +620,13 @@ function explode(endX, endY, projectile) {
   }, 200);
 }
 
+// Method called when report command is issued
 function report() {
   playSound("output");
   addItemToHistory("sys", drone.report(), "ok");
 }
 
+// Method called when -help command is issued
 function help() {
   var lines = [];
   lines.push("The following is a list of valid commands and descriptions:");
@@ -650,6 +657,7 @@ function help() {
   });
 }
 
+// Method called when move command is issued
 function move() {
   removeDroneFromMap();
   var moved = drone.move(maxX, maxY, obstructions);

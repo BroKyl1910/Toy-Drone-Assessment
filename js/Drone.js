@@ -1,4 +1,5 @@
 class Drone {
+  // Drone keeps track of its own position and bearing
   constructor() {
     this.x = 0;
     this.y = 0;
@@ -12,6 +13,7 @@ class Drone {
     this.placed = false;
   }
 
+  // Stores placed position, sets placed Boolean to true
   place(x, y, f, obstructions) {
     if(this.blockObstructed(x,y, obstructions)){
       return false
@@ -23,6 +25,7 @@ class Drone {
     return true;
   }
 
+  // Subtracts 90deg from bearing
   left() {
     this.bearing -= 90;
     // If facing north (0), turning left will put it at -90, or 270
@@ -31,6 +34,7 @@ class Drone {
     }
   }
 
+  // Adds 90deg to bearing
   right() {
     this.bearing += 90;
     // If facing west (270), turning right will put it at 360, or 0
@@ -39,6 +43,7 @@ class Drone {
     }
   }
 
+  // Return bearing based on direction
   getBearing(facing) {
     switch (facing) {
       case "north":
@@ -52,10 +57,12 @@ class Drone {
     }
   }
 
+  // Returns direction, based on bearing
   getDirection() {
     return this.compass[this.bearing];
   }
 
+  // Output current state of drone
   report() {
     return (
       "Report: Position(" +
@@ -67,6 +74,7 @@ class Drone {
     );
   }
 
+  // Move drone if next block isn't obstructed or out of bounds
   move(maxX, maxY, obstructions) {
     var xChange;
     var yChange;
@@ -113,6 +121,7 @@ class Drone {
     return true;
   }
 
+  // Checks if safe to fire projectile and returns whether it is or not 
   attack(obstructions, maxX, maxY) {
     // Need to check space around the drone according to its bearing
     // Cannot fire if within 2 units of an obstruction or edge
