@@ -53,6 +53,32 @@ var obstructions = [
   [9, 0],
 ];
 
+var sounds = {
+  enter: "../assets/sounds/enter.mp3",
+  error: "../assets/sounds/error.mp3",
+  explosion: "../assets/sounds/explosion.mp3",
+  keypress: "../assets/sounds/keypress.mp3",
+  output: "../assets/sounds/output.mp3",
+  shotgun: "../assets/sounds/shotgun.mp3",
+};
+
+ion.sound({
+  sounds: [
+    { name: "enter" },
+    { name: "error" },
+    { name: "explosion" },
+    { name: "keypress" },
+    { name: "output" },
+    { name: "shotgun" },
+  ],
+
+  // main config
+  path: "assets/sounds/",
+  preload: true,
+  multiplay: true,
+  volume: 0.4,
+});
+
 populateMapWithObstructions();
 
 // command and methods
@@ -189,6 +215,7 @@ function createTableHtml() {
 
 //Enter key
 $(commandInput).on("keydown", (e) => {
+  playSound("enter");
   // 13 is key code for enter
   if (e.which == 13) {
     var enteredCommand = $(e.currentTarget).val();
@@ -202,12 +229,8 @@ $(commandInput).on("keydown", (e) => {
     }
     $(commandInput).val("");
     commandIndex = 0;
-  }
-});
-
-//Up arrow
-$(commandInput).on("keydown", (e) => {
-  if (e.which == 38) {
+  } else if (e.which == 38) {
+    playSound("enter");
     // 38 is key code for up arrow
     if (pastCommands.length == 0) return;
 
@@ -218,13 +241,9 @@ $(commandInput).on("keydown", (e) => {
     if (pastCommands.length > commandIndex + 1) {
       commandIndex++;
     }
-  }
-});
-
-//Down arrow
-$(commandInput).on("keydown", (e) => {
-  if (e.which == 40) {
+  } else if (e.which == 40) {
     // 40 is key code for down arrow
+    playSound("enter");
     if (pastCommands.length == 0) return;
 
     $(commandInput).val("");
@@ -234,8 +253,14 @@ $(commandInput).on("keydown", (e) => {
     if (commandIndex > 0) {
       commandIndex--;
     }
+  } else {
+    playSound("keypress");
   }
 });
+
+function playSound(soundName) {
+  ion.sound.play(soundName);
+}
 
 function handleCommand(command) {
   command = command.trim().toLowerCase();
@@ -363,6 +388,8 @@ function isNumeric(c) {
 }
 
 function addItemToHistory(prefix, message, statusClass) {
+  if (statusClass == "feedback-danger") playSound("error");
+
   var itemText = "&lt;" + prefix + "&gt; " + message;
   $(historyList).append(
     '<li class="history-item ' + statusClass + '">' + itemText + "</li>"
@@ -469,12 +496,6 @@ function fireProjectile() {
   $(dronePlaceholder).append('<div class="projectile"></div>');
   var projectile = $(".projectile");
 
-  // Get position of start
-  $(dronePlaceholder).parent().css("position", "absolute");
-  var startX = $(dronePlaceholder).parent().position().left;
-  var startY = $(dronePlaceholder).parent().position().top;
-  $(dronePlaceholder).parent().css("position", "static");
-
   // Set change variable based on bearing
   var xChange;
   var yChange;
@@ -500,6 +521,26 @@ function fireProjectile() {
       yChange = 0;
   }
 
+  
+  // Get position of start
+  $(dronePlaceholder).parent().css("position", "absolute");
+  var startX = $(dronePlaceholder).parent().position().left;
+  var startY = $(dronePlaceholder).parent().position().top;
+  $(dronePlaceholder).parent().css("position", "static");
+  
+  // Based on direction, place start and end on the start or end of block
+  var xOffset = 0;
+  var yOffset = 0;
+  if (yChange == 2) {
+    //end Y has to be on bottom of end block
+    yOffset = cellHeight - (2 * $(projectile).innerHeight());
+  } else if (xChange == 2) {
+    xOffset = cellWidth - (2 * $(projectile).innerWidth());
+  }
+
+  startX += xOffset;
+  startY += yOffset;
+
   // Get position of end
   var endPlaceholderSelector =
     "#map_" + (mapX + xChange) + "_" + (mapY + yChange) + " .drone-placeholder";
@@ -510,57 +551,68 @@ function fireProjectile() {
   var endY = $(endDronePlaceHolder).parent().position().top;
   $(endDronePlaceHolder).parent().css("position", "static");
 
-  var projectile = $(".projectile");
+  console.log(endX);
+
+  endX += xOffset;
+  endY += yOffset;
+
+  console.log(endX);
+
+  $(projectile).css("left", startX + "px");
+  $(projectile).css("top", startY + "px");
+
   // Based on direction, adjust x and y to be in the middle of the cell
   if (xChange != 0) {
     // Moving in x, center y
-    var projectileY =
-      $(dronePlaceholder).parent().position().top + 0.5 * cellHeight;
+    var projectileY = startY + 0.5 * cellHeight;
     $(projectile).css("top", projectileY + "px");
     $(projectile).addClass("y-centered");
   } else {
     // Moving y, center x
-    var projectileX =
-      $(dronePlaceholder).parent().position().left + 0.5 * cellWidth;
+    var projectileX = startX + 0.5 * cellWidth;
     $(projectile).css("left", projectileX + "px");
     $(projectile).addClass("x-centered");
   }
+
+  // if (yChange == 2) {
+  //   //end Y has to be on bottom of end block
+  //   endY -= ($(projectile).innerHeight() * 2) + 5;
+  // } else if (xChange == 2) {
+  //   endX -= ($(projectile).innerWidth() * 2) + 5;
+  // }
 
   var distanceX = endX - startX;
   var distanceY = endY - startY;
   // set initial x and y
 
+  playSound("shotgun");
+
   gsap.to(".projectile", {
     x: distanceX,
     y: distanceY,
     duration: 0.5,
-    ease:Linear.easeNone,
+    ease: Linear.easeNone,
     onComplete: () => {
       explode(endX, endX, projectile);
     },
   });
 }
 
-function explode(x, y, projectile) {
+function explode(xChange, yChange, projectile) {
   var projectileHeight = $(projectile).innerHeight();
   $(projectile).removeClass("projectile");
-  $(projectile).addClass('explosion');
+  $(projectile).addClass("explosion");
 
-  // var explosionX, explosionY;
-  // var explosionHeight = $(projectile).innerHeight();
-  // explosionY = y - 0.5 * explosionHeight + 0.5 * projectileHeight;
-  // $(projectile).css("top", explosionY + "px");
-
-  // explosionX = x;
-  // $(projectile).css("left", explosionX + "px");
+  playSound("explosion");
 
   setTimeout(() => {
     $(projectile).parent().css("position", "static");
-    $('.explosion').remove();
+    $(".explosion").remove();
   }, 200);
 }
 
 function report() {
+  playSound("output");
   addItemToHistory("sys", drone.report(), "ok");
 }
 

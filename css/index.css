@@ -149,11 +149,20 @@ img.drone-img {
 .projectile.y-centered{
     transform: translateY(-50%);
 }
+
 .explosion {
     position: absolute;
     height: 1.5em;
     width: 1.5em;
     background: rgba(255, 136, 0, 1);
+}
+
+.explosion.x-centered{
+    transform: translateX(-100%);
+}
+
+.explosion.y-centered{
+    transform: translateY(-100%);
 }
 
 .command-wrapper {
