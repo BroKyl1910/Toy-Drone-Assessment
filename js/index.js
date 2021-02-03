@@ -531,11 +531,12 @@ function fireProjectile() {
   // Based on direction, place start and end on the start or end of block
   var xOffset = 0;
   var yOffset = 0;
+  var explosionHeight = getExplosionHeight();
   if (yChange == 2) {
     //end Y has to be on bottom of end block
-    yOffset = cellHeight - (2 * $(projectile).innerHeight());
+    yOffset = cellHeight - explosionHeight;// - $(projectile).innerHeight()
   } else if (xChange == 2) {
-    xOffset = cellWidth - (2 * $(projectile).innerWidth());
+    xOffset = cellWidth - explosionHeight;//- $(projectile).innerWidth()
   }
 
   startX += xOffset;
@@ -574,12 +575,6 @@ function fireProjectile() {
     $(projectile).addClass("x-centered");
   }
 
-  // if (yChange == 2) {
-  //   //end Y has to be on bottom of end block
-  //   endY -= ($(projectile).innerHeight() * 2) + 5;
-  // } else if (xChange == 2) {
-  //   endX -= ($(projectile).innerWidth() * 2) + 5;
-  // }
 
   var distanceX = endX - startX;
   var distanceY = endY - startY;
@@ -598,7 +593,14 @@ function fireProjectile() {
   });
 }
 
-function explode(xChange, yChange, projectile) {
+function getExplosionHeight(){
+  $("body").append('<div class="explosion"></div>');
+  var explosionHeight = $('.explosion').innerHeight();
+  $('.explosion').remove();
+  return explosionHeight;
+}
+
+function explode(endX, endY, projectile) {
   var projectileHeight = $(projectile).innerHeight();
   $(projectile).removeClass("projectile");
   $(projectile).addClass("explosion");
