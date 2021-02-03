@@ -24,6 +24,16 @@
         width: 100%;
         height: 100%;
     }
+
+    .projectile{
+        height: 0.3em;
+        width: 0.3em;
+    }
+    
+    .explosion{
+        height: 0.6em;
+        width: 0.6em;
+    }
 }
 
 /* iPads, Tablets */
@@ -47,6 +57,16 @@
         margin-top: 5px;
         width: 100%;
     }
+
+    .projectile{
+        height: 0.5em;
+        width: 0.5em;
+    }
+    
+    .explosion{
+        height: 1em;
+        width: 1em;
+    }
 }
 
 /* Small screens, laptops */
@@ -64,5 +84,15 @@
     }
     .command-wrapper {
         width: 100%;
+    }
+
+    .projectile{
+        height: 0.5em;
+        width: 0.5em;
+    }
+    
+    .explosion{
+        height: 1em;
+        width: 1em;
     }
 }

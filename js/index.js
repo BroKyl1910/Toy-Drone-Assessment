@@ -568,7 +568,7 @@ function help() {
   var lines = [];
   lines.push("The following is a list of valid commands and descriptions:");
   lines.push(
-    "<strong>PLACE X,Y,F</strong>: PLACE is used to place the drone on the surface.<br/>X, Y and F represent the x and y co-ordinates, and the direction of the drone respectively.<br />An example of a valid place command would be PLACE 5,5,WEST."
+    "<strong>PLACE X,Y,F</strong>: PLACE is used to place the drone on the surface. X, Y and F represent the x and y co-ordinates, and the direction of the drone respectively. An example of a valid place command would be PLACE 5,5,WEST."
   );
   lines.push(
     "<strong>LEFT</strong>: LEFT is used to rotate the drone 90° to the left"
@@ -580,13 +580,13 @@ function help() {
     "<strong>MOVE</strong>: MOVE is used to move one unit forward in the direction the drone is facing."
   );
   lines.push(
-    "<strong>ATTACK</strong>: ATTACK is used to fire a projectile 2 units forwards from the<br/>drone's position in the direction it is facing."
+    "<strong>ATTACK</strong>: ATTACK is used to fire a projectile 2 units forwards from the drone's position in the direction it is facing."
   );
   lines.push(
-    "<strong>REPORT</strong>: REPORT is used to get a text report of the drone's current<br />position and the direction it is facing.<br/><br/>"
+    "<strong>REPORT</strong>: REPORT is used to get a text report of the drone's current position and the direction it is facing. <br /><br />"
   );
   lines.push(
-    "<strong>*IMPORTANT*</strong>: The PLACE command has to be used before any other command in the sequence.<br/>"
+    "<strong>*IMPORTANT*</strong>: The PLACE command has to be used before any other command in the sequence."
   );
 
   lines.map((line) => {
