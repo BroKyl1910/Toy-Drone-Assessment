@@ -172,7 +172,6 @@ function createTableHtml() {
         '">' +
         dronePlaceholderHtml +
         " " +
-        projectilePlaceholderHtml +
         "</td>";
     }
     tableHtml += '<td class="index-reference">' + yIndex + "</td></tr>";
@@ -452,7 +451,7 @@ function attack() {
     );
   } else {
     addItemToHistory("sys", "Drone attacking...", "ok");
-    // fireProjectile();
+    fireProjectile();
   }
 }
 
@@ -466,90 +465,98 @@ function fireProjectile() {
 
   var cellWidth = $(dronePlaceholder).innerWidth();
   var cellHeight = $(dronePlaceholder).innerHeight();
-  var projectileX = $(dronePlaceholder).position().left - 0.5 * cellWidth;
-  var projectileY = $(dronePlaceholder).position().top + 0.5 * cellHeight;
 
   $(dronePlaceholder).append('<div class="projectile"></div>');
   var projectile = $(".projectile");
-  $(projectile).parent().css("position", "relative");
 
-  var projectileHeight = $(projectile).innerHeight();
-  projectileY = projectileY - 0.5 * projectileHeight;
-  $(projectile).css("top", projectileY + "px");
+  // Get position of start
+  $(dronePlaceholder).parent().css("position", "absolute");
+  var startX = $(dronePlaceholder).parent().position().left;
+  var startY = $(dronePlaceholder).parent().position().top;
+  $(dronePlaceholder).parent().css("position", "static");
 
-  var projectileWidth = $(projectile).innerWidth();
-  projectileX = projectileX + 0.5 * projectileWidth;
-  $(projectile).css("left", projectileX + "px");
-
-  var startX = projectileX;
-  var endX = projectileX - 2 * cellWidth + projectileWidth;
-  var startY = projectileY;
-  var endY = projectileY;
-  animateProjectile(startX, startY, endX, endY, dronePlaceholder);
-}
-
-function animateProjectile(startX, startY, endX, endY, dronePlaceholder) {
+  // Set change variable based on bearing
   var xChange;
   var yChange;
   switch (drone.bearing) {
     case 0:
       xChange = 0;
-      yChange = 1;
+      yChange = -2;
       break;
     case 90:
-      xChange = 1;
+      xChange = 2;
       yChange = 0;
       break;
     case 180:
       xChange = 0;
-      yChange = -1;
+      yChange = 2;
       break;
     case 270:
-      xChange = -1;
+      xChange = -2;
       yChange = 0;
       break;
     default:
       xChange = 0;
-      yChange = 1;
+      yChange = 0;
   }
 
-  console.log("xChange", xChange);
-  console.log("yChange", yChange);
+  // Get position of end
+  var endPlaceholderSelector =
+    "#map_" + (mapX + xChange) + "_" + (mapY + yChange) + " .drone-placeholder";
+  var endDronePlaceHolder = $(endPlaceholderSelector);
 
-  var currentX = startX;
-  var currentY = startY;
+  $(endDronePlaceHolder).parent().css("position", "absolute");
+  var endX = $(endDronePlaceHolder).parent().position().left;
+  var endY = $(endDronePlaceHolder).parent().position().top;
+  $(endDronePlaceHolder).parent().css("position", "static");
+
   var projectile = $(".projectile");
+  // Based on direction, adjust x and y to be in the middle of the cell
+  if (xChange != 0) {
+    // Moving in x, center y
+    var projectileY =
+      $(dronePlaceholder).parent().position().top + 0.5 * cellHeight;
+    $(projectile).css("top", projectileY + "px");
+    $(projectile).addClass("y-centered");
+  } else {
+    // Moving y, center x
+    var projectileX =
+      $(dronePlaceholder).parent().position().left + 0.5 * cellWidth;
+    $(projectile).css("left", projectileX + "px");
+    $(projectile).addClass("x-centered");
+  }
 
-  var interval = setInterval(function () {
-    currentY += 1 * yChange;
-    currentX += 1 * xChange;
+  var distanceX = endX - startX;
+  var distanceY = endY - startY;
+  // set initial x and y
 
-    $(projectile).css("top", currentY + "px");
-    $(projectile).css("left", currentX + "px");
-    if (currentX < endX && currentY >= endY) {
-      clearInterval(interval);
-      explode(endX, endY, dronePlaceholder);
-    }
-  }, 10);
+  gsap.to(".projectile", {
+    x: distanceX,
+    y: distanceY,
+    duration: 0.5,
+    ease:Linear.easeNone,
+    onComplete: () => {
+      explode(endX, endX, projectile);
+    },
+  });
 }
 
-function explode(x, y, dronePlaceholder) {
-  $(".projectile").remove();
-  $(dronePlaceholder).append('<div class="explosion"></div>');
-  var explosion = $(".explosion");
-  $(explosion).parent().css("position", "relative");
+function explode(x, y, projectile) {
+  var projectileHeight = $(projectile).innerHeight();
+  $(projectile).removeClass("projectile");
+  $(projectile).addClass('explosion');
 
-  var explosionX, explosionY;
-  var explosionHeight = $(explosion).innerHeight();
-  explosionY = y - 0.5 * explosionHeight + 7.5;
-  $(explosion).css("top", explosionY + "px");
+  // var explosionX, explosionY;
+  // var explosionHeight = $(projectile).innerHeight();
+  // explosionY = y - 0.5 * explosionHeight + 0.5 * projectileHeight;
+  // $(projectile).css("top", explosionY + "px");
 
-  explosionX = x;
-  $(explosion).css("left", explosionX + "px");
+  // explosionX = x;
+  // $(projectile).css("left", explosionX + "px");
 
   setTimeout(() => {
-    $(explosion).parent().css("position", "static");
-    $(".explosion").remove();
+    $(projectile).parent().css("position", "static");
+    $('.explosion').remove();
   }, 200);
 }
 

@@ -137,15 +137,22 @@ img.drone-img {
 
 .projectile {
     position: absolute;
-    height: 1em;
-    width: 1em;
+    height: 0.6em;
+    width: 0.6em;
     background: rgba(255, 255, 255, 0.7);
 }
 
+.projectile.x-centered{
+    transform: translateX(-50%);
+}
+
+.projectile.y-centered{
+    transform: translateY(-50%);
+}
 .explosion {
     position: absolute;
-    height: 2em;
-    width: 2em;
+    height: 1.5em;
+    width: 1.5em;
     background: rgba(255, 136, 0, 1);
 }
 
