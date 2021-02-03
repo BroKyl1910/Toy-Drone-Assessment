@@ -60,6 +60,7 @@ var sounds = {
   keypress: "../assets/sounds/keypress.mp3",
   output: "../assets/sounds/output.mp3",
   shotgun: "../assets/sounds/shotgun.mp3",
+  radar: "../assets/sounds/radar.mp3",
 };
 
 ion.sound({
@@ -70,6 +71,7 @@ ion.sound({
     { name: "keypress" },
     { name: "output" },
     { name: "shotgun" },
+    { name: "radar" },
   ],
 
   // main config
@@ -152,7 +154,7 @@ function placeDroneOnMap() {
   }
 
   $(dronePlaceholder).show();
-
+  playSound("radar");
   $(dronePlaceholder).css(
     "background-image",
     'url("assets/images/' + fileName + '")'
